@@ -1130,8 +1130,7 @@ bool BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags
       {
          V2 v = se;
 
-         // try rotating move left in 6 steps of 22.5° up to 135°
-         for (int j = 0; j < 6; j++)
+         // try rotating move left in 6 steps of 22.5?up to 135?         for (int j = 0; j < 6; j++)
          {
             V2ROTATE(&v, 0.5f * (float)-M_PI_4);
             V2ADD(&stepend, S, &v);
@@ -1154,8 +1153,7 @@ bool BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags
       {
          V2 v = se;
 
-         // try rotating move right in 6 steps of 22.5° up to 135°
-         for (int j = 0; j < 6; j++)
+         // try rotating move right in 6 steps of 22.5?up to 135?         for (int j = 0; j < 6; j++)
          {
             V2ROTATE(&v, 0.5f * (float)M_PI_4);
             V2ADD(&stepend, S, &v);

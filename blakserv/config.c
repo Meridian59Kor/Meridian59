@@ -66,7 +66,8 @@ config_table_type config_table[] =
 { PATH_PACKAGE_FILE,      F, "PackageFile",   CONFIG_PATH,  "." },
 
 { SOCKET_GROUP,           F, "[Socket]",      CONFIG_GROUP, "" },
-{ SOCKET_PORT,            F, "Port",          CONFIG_INT,   "5959" },
+//{ SOCKET_PORT,            F, "Port",          CONFIG_INT,   "5959" },
+{ SOCKET_PORT,            F, "Port",          CONFIG_INT,   "35438" },
 { SOCKET_MAINTENANCE_PORT,F, "MaintenancePort",CONFIG_INT,  "9998" },
 { SOCKET_MAINTENANCE_MASK,F, "MaintenanceMask",CONFIG_STR,  "::ffff:127.0.0.1" },
 { SOCKET_DNS_LOOKUP,      T, "DNSLookup",     CONFIG_BOOL,  "No" },

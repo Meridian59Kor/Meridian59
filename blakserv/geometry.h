@@ -242,7 +242,7 @@ __forceinline void V2ROTATE(V2* V, const float Radian)
    V->Y = px * sn + py * cs;
 }
 
-// Möller–Trumbore intersection algorithm
+// M?ler–Trumbore intersection algorithm
 // https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
 // Returns true if there is an intersection
 __forceinline bool IntersectLineTriangle(const V3* P1, const V3* P2, const V3* P3, const V3* S, const V3* E)
