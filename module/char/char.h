@@ -41,7 +41,7 @@ void AbortCharDialogs(void);
 void CharactersDestroy(Character *c, WORD num_characters);
 
 
-#define MIN_CHARNAME 3        /* Minimum length of character name */
+#define MIN_CHARNAME 2        /* Minimum length of character name */
 
 #define NUM_GENDERS 2
 

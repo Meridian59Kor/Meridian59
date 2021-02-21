@@ -256,7 +256,7 @@ void ConfigLoad(void)
    config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, True, ini_file);
    config.xp_display_percent = GetConfigInt(interface_section, XPDisplay, False, ini_file);
    config.chat_time_stamps = GetConfigInt(interface_section, INITimeStamps, False, ini_file);
-   config.language     = GetConfigInt(interface_section, INILanguage, 0, ini_file);
+   config.language     = GetConfigInt(interface_section, INILanguage, 2, ini_file);
    config.guest        = GetConfigInt(misc_section, INIGuest, False, ini_file);
    config.server_low   = GetConfigInt(misc_section, INIServerLow, 0, ini_file);
    config.server_high  = GetConfigInt(misc_section, INIServerHigh, 0, ini_file);

@@ -17,9 +17,9 @@ static HWND hTabPage;   // Handle of this tabbed dialog
 extern HWND hMakeCharDialog;
 
 /* Legal characters for character names */
-static char legal_chars[] = 
-"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_ '!@$^&*()+=:[]{};/?|<>"
-"ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõöøùúûüı?";
+// static char legal_chars[] = 
+// "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_ '!@$^&*()+=:[]{};/?|<>"
+// "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõöøùúûüı?";
 
 /********************************************************************/
 BOOL CALLBACK CharNameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
@@ -32,7 +32,7 @@ BOOL CALLBACK CharNameDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       // Fiddle with "name" edit box 
       hName = GetDlgItem(hDlg, IDC_NAME);
       SetWindowFont(hName, GetFont(FONT_INPUT), FALSE);
-      Edit_LimitText(hName, MAX_CHARNAME);
+      Edit_LimitText(hName, MAX_CHARNAME - 2);
       
       // Fiddle with "description" edit box 
       hDesc = GetDlgItem(hDlg, IDC_DESCRIPTION);
@@ -101,8 +101,8 @@ char *VerifyCharName(char *name)
       return NULL;
 
    // Check that name is made up of legal characters
-   if ((int) strspn(name, legal_chars) != len)
-      return NULL;
+   // if ((int) strspn(name, legal_chars) != len)
+      // return NULL;
 
    return name;
 }

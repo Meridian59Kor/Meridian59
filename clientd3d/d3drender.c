@@ -7,6 +7,10 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
+#include <Windows.h>    /////////////////
+#include <locale.h>     // For Unicode //
+#include <stdio.h>      /////////////////
+
 #define   TEX_CACHE_MAX_OBJECT   8000000
 #define   TEX_CACHE_MAX_WORLD      8000000
 #define   TEX_CACHE_MAX_LMAP      8000000
@@ -3200,7 +3204,8 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
                   room_type *room, Draw3DParams *params, font_3d *pFont)
 {
    D3DMATRIX         mat, xForm, trans;
-   int               strLen, sector_flags, offset;
+   // int               strLen, sector_flags, offset;
+   int               sector_flags, offset;
    room_contents_node   *pRNode;
    list_type         list;
    long            dx, dy, angle, top, bottom;
@@ -3210,13 +3215,19 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
    custom_bgra         bgra;
    float            lastDistance, width, height, x, z, depth, distance;
    char            *pName, *ptr;
-   TBYTE            c;
+   // TBYTE            c;
    COLORREF         fg_color;
    Color            color;
    BYTE            *palette;
 
    d3d_render_packet_new   *pPacket;
    d3d_render_chunk_new   *pChunk;
+
+   _wsetlocale(LC_ALL, L"korean");
+   int len, b;
+   WCHAR* w_ptr = NULL;
+   WCHAR* w_ptr2 = NULL;
+   WCHAR* tw_ptr = NULL;
 
    // base objects
    for (list = room->contents; list != NULL; list = list->next)
@@ -3265,7 +3276,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
       angle = (pRNode->angle - intATan2(-dy,-dx)) & NUMDEGREES_MASK;
 
       pName = LookupNameRsc(pRNode->obj.name_res);
-      strLen = strlen(pName);
+      // strLen = strlen(pName);
 
       angle = pRNode->angle - (params->viewer_angle + 3072);
 
@@ -3356,19 +3367,39 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 
          ptr = pName;
 
+         // For Unicode //
+         len = MultiByteToWideChar(CP_ACP, NULL, ptr, -1, NULL, NULL);
+         w_ptr = (WCHAR*)malloc(len * 2);
+         w_ptr2 = (WCHAR*)malloc(len * 2);
+         MultiByteToWideChar(CP_ACP, 0, ptr, -1, w_ptr, len * 2);
+         tw_ptr = w_ptr2;
+         w_ptr2 = w_ptr;
+
+         /*
          while (c = *ptr++)
          {
             x += (pFont->texST[c - 32][1].s - pFont->texST[c - 32][0].s) *
                pFont->texWidth / pFont->texScale * (distance / FINENESS);
          }
+         */
 
-         ptr = pName;
+         while (b = *w_ptr2++)
+         {
+             x += (pFont->texST[b][1].s - pFont->texST[b][0].s) *
+                 pFont->texWidth / pFont->texScale * (distance / FINENESS);
+         }
 
-         while (c = *ptr++)
+         // ptr = pName;
+
+         w_ptr2 = w_ptr;
+
+         // while (c = *ptr++)
+         while (b = *w_ptr2++)
          {
             int   i;
 
             // flip t values since bmps are upside down
+            /*
             st[0].s = pFont->texST[c - 32][0].s;
             st[0].t = pFont->texST[c - 32][1].t;
             st[1].s = pFont->texST[c - 32][0].s;
@@ -3377,6 +3408,16 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
             st[2].t = pFont->texST[c - 32][0].t;
             st[3].s = pFont->texST[c - 32][1].s;
             st[3].t = pFont->texST[c - 32][1].t;
+            */
+
+            st[0].s = pFont->texST[b][0].s;
+            st[0].t = pFont->texST[b][1].t;
+            st[1].s = pFont->texST[b][0].s;
+            st[1].t = pFont->texST[b][0].t;
+            st[2].s = pFont->texST[b][1].s;
+            st[2].t = pFont->texST[b][0].t;
+            st[3].s = pFont->texST[b][1].s;
+            st[3].t = pFont->texST[b][1].t;
 
             width = (st[2].s - st[0].s) * pFont->texWidth * 2.0f / pFont->texScale *
                (distance / FINENESS);
@@ -3480,6 +3521,11 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 
             x -= width;
          }
+         free(w_ptr);
+         w_ptr = NULL;
+         w_ptr2 = tw_ptr;
+         free(w_ptr2);
+         w_ptr2 = NULL;
       }
    }
 }
@@ -4287,8 +4333,10 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    BITMAPINFO      bmi;
    long         x = 0;
    long         y = 0;
-   TBYTE         str[2] = _T("x");
-   TBYTE         c;
+   // TBYTE         str[2] = _T("x");
+   // TBYTE         c;
+   WCHAR        str2[2] = L"x"; // For Unicode
+   int          b;              // For Unicode
    SIZE         size;
    D3DLOCKED_RECT   d3dlr;
    BYTE         *pDstRow;
@@ -4301,12 +4349,17 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    pFont->flags = 0;
    pFont->texScale = 1.0f;
    
+   /*
    if (pFont->fontHeight > 40)
       pFont->texWidth = pFont->texHeight = 1024;
    else if (pFont->fontHeight > 20)
       pFont->texWidth = pFont->texHeight = 512;
    else
       pFont->texWidth = pFont->texHeight = 256;
+    */
+
+   pFont->texWidth = 5060;
+   pFont->texHeight = 5060;
    
    IDirect3DDevice9_GetDeviceCaps(gpD3DDevice, &d3dCaps);
   
@@ -4355,24 +4408,42 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    SetBkColor(hDC, 0);
    SetTextAlign(hDC, TA_TOP);
    
-   for(c = 32; c < 256 && c > 31; c++ )
+   // for(c = 32; c < 256 && c > 31; c++ )
+   for(b = 0; b < UNICODE_MAX; b++ )
    {
       BOOL   temp;
       int left_offset, right_offset;
 
-      str[0] = c;
-      GetTextExtentPoint32(hDC, (LPCSTR)str, 1, &size);
+      // str[0] = c;
+      // GetTextExtentPoint32(hDC, (LPCSTR)str, 1, &size);
+      str2[0] = b;
+      GetTextExtentPoint32W(hDC, str2, wcslen(str2), &size);
       
+      /*
       if (!GetCharABCWidths(hDC, c, c, &pFont->abc[c-32])) 
       {
          pFont->abc[c-32].abcA = 0;
          pFont->abc[c-32].abcB = size.cx;
          pFont->abc[c-32].abcC = 0;
       }
+      */
+
+      if (!GetCharABCWidthsW(hDC, b, b, &pFont->abc[b]))
+      {
+          pFont->abc[b].abcA = 0;
+          pFont->abc[b].abcB = size.cx;
+          pFont->abc[b].abcC = 0;
+      }
       
+      /*
       left_offset = abs(pFont->abc[c-32].abcA);
       right_offset = abs(pFont->abc[c-32].abcC);
       size.cx = abs(pFont->abc[c-32].abcA) + pFont->abc[c-32].abcB + abs(pFont->abc[c-32].abcC);
+      */
+
+      left_offset = abs(pFont->abc[b].abcA);
+      right_offset = abs(pFont->abc[b].abcC);
+      size.cx = abs(pFont->abc[b].abcA) + pFont->abc[b].abcB + abs(pFont->abc[b].abcC);
       
       // Not spacing these out enough causes artefacts in the name graphics.
       // Add 2 pixels after each letter, used to be one.
@@ -4382,12 +4453,21 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
          y += size.cy + 1;
       }
 
+      /*
       temp = ExtTextOut(hDC, x + left_offset, y + 0, ETO_OPAQUE, NULL, (LPCSTR)str, 1, NULL);
 
       pFont->texST[c-32][0].s = ((FLOAT)(x+0)) / pFont->texWidth;
       pFont->texST[c-32][0].t = ((FLOAT)(y+0)) / pFont->texHeight;
       pFont->texST[c-32][1].s = ((FLOAT)(x+0 + size.cx)) / pFont->texWidth;
       pFont->texST[c-32][1].t = ((FLOAT)(y+0 + size.cy)) / pFont->texHeight;
+      */
+
+      temp = ExtTextOutW(hDC, x + left_offset, y + 0, ETO_OPAQUE, NULL, (LPCWSTR)str2, wcslen(str2), NULL);
+
+      pFont->texST[b][0].s = ((FLOAT)(x + 0)) / pFont->texWidth;
+      pFont->texST[b][0].t = ((FLOAT)(y + 0)) / pFont->texHeight;
+      pFont->texST[b][1].s = ((FLOAT)(x + 0 + size.cx)) / pFont->texWidth;
+      pFont->texST[b][1].t = ((FLOAT)(y + 0 + size.cy)) / pFont->texHeight;
 
       x += size.cx + 2; // old method: size.cx + 1
    }
