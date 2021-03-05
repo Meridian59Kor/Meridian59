@@ -421,7 +421,7 @@ Bool DateFromSeconds(long seconds, char *str)
    struct tm *t;
    time_t local_time = seconds;
 
-   local_time += 1388534400L;    // Offset to January 2014
+   local_time += 1614000000L;    // Offset to about float(2021.17) year
    t = localtime(&local_time);
 
    if (t == NULL)
