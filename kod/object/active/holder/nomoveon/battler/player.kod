@@ -14478,6 +14478,7 @@ messages:
       piTimeAttackedPlayer = 0;
       piTimeAttackedByPlayer = 0;
       piTimeLastMurder = 0;
+      piReward_timestamp = 0;
 
       return;
    }
